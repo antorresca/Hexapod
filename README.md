@@ -1,28 +1,34 @@
-# Hexapod ROS 2  
+# Hexapod ROS 2 – 18-DOF Walking Robot Control
 
-## Authors  
+## Authors
 
-* **Andres Camilo Torres Cajamarca** – *Mechatronics Engineering Student*  
-* **Felipe Chaves Delgadillo** – *Mechatronics Engineering Student*  
+* **Andres Camilo Torres Cajamarca** – *Mechatronics Engineering Student*
+* **Felipe Chaves Delgadillo** – *Mechatronics Engineering Student*
 
-## Tutors  
+## Tutors
 
-* **Ph.D. Eng. Pedro Fabián Cárdenas Herrera**  
-* **Ph.D. Eng. Ricardo Emiro Ramírez Heredia**  
+* **Ph.D. Eng. Pedro Fabián Cárdenas Herrera**
+* **Ph.D. Eng. Ricardo Emiro Ramírez Heredia**
 
-## Description  
+## Description
 
-ROS 2 Humble packages for controlling an 18-DOF (Degrees of Freedom) hexapod robot.  
+A set of ROS 2 Humble packages designed to control an 18-degree-of-freedom (DOF) hexapod robot, including inverse kinematics, transformation, and motor control nodes.
 
-## Installation and Usage  
+## User Manual
 
-Before using these packages, install the following prerequisites:  
+### Connection with Robot
 
-* [Ubuntu 22.04](https://releases.ubuntu.com/jammy/)  
-* [ROS 2 Humble](https://docs.ros.org/en/humble/index.html)  
-* [DynamixelSDK](https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_sdk/download/)  
+You can use either the Raspberry Pi connected to the robot or a laptop.
 
-Then, run the following commands in an Ubuntu terminal:  
+#### Using Laptop
+
+To use these packages, install the following prerequisites:
+
+* [Ubuntu 22.04](https://releases.ubuntu.com/jammy/)
+* [ROS 2 Humble](https://docs.ros.org/en/humble/index.html)
+* [DynamixelSDK](https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_sdk/download/)
+
+Then, run the following commands in an Ubuntu terminal:
 
 ```bash
 git clone https://github.com/antorresca/Hexapod
@@ -31,19 +37,29 @@ colcon build
 source install/setup.bash
 ```
 
-After completing these steps, you can use the packages by following the User Manual.
+Once completed, proceed to the Launching ROS 2 Nodes section to run the system.
 
-## User Manual
+#### Using Raspberry Pi and SSH
 
-### Connection with the Robot  
+If using the Raspberry Pi via SSH, first ensure that you are connected to the 'LabFabEx' Wi-Fi network. If you do not have the password, please contact the laboratory manager.
 
-### Understanding ROS 2 Nodes, Topics, Services, and Actions  
+Then, in a Windows CMD or a Unix terminal, connect to the Raspberry Pi using the following credentials:
 
-### Launching ROS 2 Nodes  
+*User: Hexapodo*
 
-#### Using Laptop
+*Password: UNAL2025*
 
-The following ROS 2 nodes must be launched to use the robot:
+Run the following command:
+
+```bash
+ssh hexapodo@hexapodo
+```
+
+Once logged in, proceed to the steps in the ***Launching ROS 2 Nodes*** section.
+
+### Launching ROS 2 Nodes
+
+The following ROS 2 nodes must be launched in this order, using a new terminal (or tmux pane) for each one:
 
 * *gui_node*
 * *cinematica_node*
@@ -51,33 +67,22 @@ The following ROS 2 nodes must be launched to use the robot:
 * *dynamixel_node*
 
 ```bash
+# In separate terminals (or tmux panes), run in this order:
 ros2 run gui_node gui_client
-```
-
-```bash
-ros2 run transformation_node transformation_node 
-```
-
-
-```bash
-ros2 run cinematica_node cinematica_node 
-```
-
-
-```bash
-ros2 run dynamixel_node dynamixel_node 
+ros2 run transformation_node transformation_node
+ros2 run cinematica_node cinematica_node
+ros2 run dynamixel_node dynamixel_node
 ```
 
 Notes:
 
-* Ensure that all nodes are developed. The *gui_node* will remain in a loop until *transformation_node* is launched, and *transformation_node*  will stay in a loop until *cinematica_node* is launched. 
-* If the U2D2 is not connected, *dynamixel_node* will not work and will attempt to reconnect every 10 seconds.
-* Always check the *logger* for information about the status and functionality of the nodes.
+* Ensure that all nodes are properly built and available in your workspace.
+* The gui_node will remain in a loop until transformation_node is launched, and transformation_node will stay in a loop until cinematica_node is launched.
+* If the U2D2 is not connected, dynamixel_node will not work and will attempt to reconnect every 10 seconds.
+* Always check the logger for information about the status and functionality of the nodes.
 
-In *gui_node*, when you type **'1'**, the program will start, and the trajectory will be calculated in *cinematica_node*.  
+In *gui_node*, when you type **'1'**, the program will start, and the trajectory will be calculated in *cinematica_node*.
 
-Then, *transformation_node* will retrieve the first array of positions and attempt to send it to *dynamixel_node* via an action.  
+Then, *transformation_node* will retrieve the first array of positions and attempt to send it to *dynamixel_node* via an action.
 
 Once *dynamixel_node* reaches all the positions, *transformation_node* will retrieve the next position, repeating the process until the user stops it.
-
-#### Automatic
